@@ -1,6 +1,8 @@
 package com.example.Flights.model;
 
 import java.util.Objects;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -23,12 +25,18 @@ public class Response {
       return false;
     }
     Response response = (Response) o;
-    return Objects.equals(getPath(), response.getPath());
+    return Objects.equals(getPath(), response.getPath()) && mathRegex(response.getPath());
   }
 
   @Override
   public int hashCode() {
     return Objects.hash(getPath());
+  }
+
+  private boolean mathRegex(String path) {
+    Pattern pattern = Pattern.compile(".*_.*_.*");
+    Matcher matcher = pattern.matcher(path);
+    return  matcher.find();
   }
 
   private String path;
