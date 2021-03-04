@@ -11,7 +11,7 @@ public class GlobalExceptionHandler {
 
   @ResponseBody
   @ExceptionHandler(ApplicationException.class)
-  @ResponseStatus(HttpStatus.NO_CONTENT)
+  @ResponseStatus(HttpStatus.NOT_FOUND)
   public String applicationException(final ApplicationException applicationException) {
 
     return applicationException.getMsg();
