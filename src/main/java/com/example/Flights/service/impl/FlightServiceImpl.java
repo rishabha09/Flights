@@ -49,7 +49,7 @@ public class FlightServiceImpl implements FlightService {
         responses.add(response);
         continue;
       }
-      List<Flight> flights = desFlights.stream().filter( flt -> flt.getSrc().equals(flight.getDes())).collect(Collectors.toList());
+      List<Flight> flights = desFlights.stream().filter( flt -> flt.getSrc().equals(flight.getDes()) && HelperUtil.minHalt(flight.getArr(), flt.getDep(), Constants.minHaltDurInMin)).collect(Collectors.toList());
       if(Objects.nonNull(flights)) {
         for(Flight flt : flights) {
           Response response = new Response();

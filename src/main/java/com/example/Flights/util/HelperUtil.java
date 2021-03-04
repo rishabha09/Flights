@@ -64,6 +64,19 @@ public class HelperUtil {
     return duration;
   }
 
+  public static Boolean minHalt(int arr, int dep, long minHaltDurInMin) {
+    long arrMin = (((arr/100) * 60) + (arr)%100);
+    long depMin = (((dep/100) * 60) + (dep)%100);
+
+    long dur = depMin - arrMin;
+    if(dur < 0) { dur += 1440; }
+
+    if(dur < minHaltDurInMin) {
+      return false;
+    }
+    return true;
+  }
+
   public static String getPath(List<Flight> flights) {
     Set<String> cities = new LinkedHashSet<>();
     for(Flight flight : flights) {
