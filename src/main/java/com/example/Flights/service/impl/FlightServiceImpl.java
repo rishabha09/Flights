@@ -33,15 +33,15 @@ public class FlightServiceImpl implements FlightService {
     return flightsResult;
   }
 
-  private List<Response> getFlightsBySrcAndDest(String src, String des) {
+  private List<Response> getFlightsBySrcAndDest(String src, String dest) {
 
     List<Response> responses = new ArrayList<>();
 
     List<Flight> srcFlights = getFlightsBySrc(src);
-    List<Flight> desFlights = getFlightsByDes(des);
+    List<Flight> desFlights = getFlightsByDes(dest);
 
     for(Flight flight : srcFlights) {
-      if(flight.getDes().equals(des)) {
+      if(flight.getDes().equals(dest)) {
         Response response = new Response();
         response.setCode(HelperUtil.getCode(Arrays.asList(flight)));
         response.setPath(HelperUtil.getPath(Arrays.asList(flight)));
@@ -62,9 +62,10 @@ public class FlightServiceImpl implements FlightService {
     }
 
     if(responses.size() == 0) {
-      throw new ApplicationException(String.format("No flights found between %s and %s", src, des));
+      throw new ApplicationException(String.format("No flights found between %s and %s", src, dest));
     }
 
+    // Sorting the response based on duration
     Collections.sort(responses, new Comparator<Response>() {
       @Override
       public int compare(Response o1, Response o2) {
@@ -72,20 +73,34 @@ public class FlightServiceImpl implements FlightService {
       }
     });
 
-    if(responses.size() > Constants.No_OF_FLIGHTS_RETURN) {
-      return responses.subList(0, Constants.No_OF_FLIGHTS_RETURN);
+    List<Response> result = responses.stream()
+        .distinct()
+        .collect(Collectors.toList());
+
+    if(result.size() > Constants.No_OF_FLIGHTS_RETURN) {
+      result = result.subList(0, Constants.No_OF_FLIGHTS_RETURN);
     }
-    return responses;
+    return result;
   }
 
+  /**
+   * fetch all the flights by src
+   * @param src
+   * @return
+   */
   private List<Flight> getFlightsBySrc(String src) {
     List<Flight> srcFlights = CSVService.flights.stream().filter( flight -> flight.getSrc().equals(src)).collect(Collectors.toList());
 
     return srcFlights;
   }
 
-  private List<Flight> getFlightsByDes(String des) {
-    List<Flight> desFlights = CSVService.flights.stream().filter( flight -> flight.getDes().equals(des)).collect(Collectors.toList());
+  /**
+   * fetch all the flights by dest
+   * @param dest
+   * @return
+   */
+  private List<Flight> getFlightsByDes(String dest) {
+    List<Flight> desFlights = CSVService.flights.stream().filter( flight -> flight.getDes().equals(dest)).collect(Collectors.toList());
 
     return desFlights;
   }
